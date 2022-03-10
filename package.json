@@ -8,6 +8,7 @@
     "contract"
   ],
   "scripts": {
+    "build": "yarn workspace @nft-collection/web build",
     "start": "yarn workspace @nft-collection/web start",
     "deploy": "yarn workspace @nft-collection/contract deploy",
     "deploy:rinkeby": "yarn workspace @nft-collection/contract deploy:rinkeby",
