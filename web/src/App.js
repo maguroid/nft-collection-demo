@@ -71,10 +71,11 @@ const App = () => {
 
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(
           CONTRACT_ADDRESS,
           myEpicNft.abi,
-          provider
+          signer
         );
 
         console.log("Going to pop wallet now to pay gas...");
@@ -150,11 +151,10 @@ const App = () => {
     const initNftCount = async () => {
       const { ethereum } = window;
       const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
       const connectedContract = new ethers.Contract(
         CONTRACT_ADDRESS,
         myEpicNft.abi,
-        signer
+        provider
       );
 
       const count = await connectedContract.getTotalNFTsMintedSoFar();
