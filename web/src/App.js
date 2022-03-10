@@ -16,36 +16,6 @@ const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [nftCount, setNftCount] = useState(0);
 
-  const checkIfWalletIsConnected = async () => {
-    const { ethereum } = window;
-
-    if (!ethereum) {
-      console.log("Make sure you have metamask!");
-      return;
-    } else {
-      console.log("We have the ethereum object", ethereum);
-    }
-
-    let chainId = await ethereum.request({ method: "eth_chainId" });
-    console.log("Connected to chain " + chainId);
-
-    const rinkebyChainId = "0x4";
-    if (chainId !== rinkebyChainId) {
-      alert("You are not connected to the Rinkeby Test Network!");
-    }
-
-    const accounts = await ethereum.request({ method: "eth_accounts" });
-
-    if (accounts.length !== 0) {
-      const account = accounts[0];
-      console.log("Found an authorized account;", account);
-      setCurrentAccount(account);
-      setupEventLister();
-    } else {
-      console.log("No authorized account found");
-    }
-  };
-
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
@@ -124,19 +94,7 @@ const App = () => {
       console.log(error);
     }
   };
-  const initNftCount = async () => {
-    const { ethereum } = window;
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const connectedContract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      myEpicNft.abi,
-      signer
-    );
 
-    const count = await connectedContract.getTotalNFTsMintedSoFar();
-    setNftCount(count.toNumber());
-  };
   // Render Methods
   const renderNotConnectedContainer = () => (
     <button
@@ -157,12 +115,54 @@ const App = () => {
   );
 
   useEffect(() => {
+    const checkIfWalletIsConnected = async () => {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        console.log("Make sure you have metamask!");
+        return;
+      } else {
+        console.log("We have the ethereum object", ethereum);
+      }
+
+      let chainId = await ethereum.request({ method: "eth_chainId" });
+      console.log("Connected to chain " + chainId);
+
+      const rinkebyChainId = "0x4";
+      if (chainId !== rinkebyChainId) {
+        alert("You are not connected to the Rinkeby Test Network!");
+      }
+
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+
+      if (accounts.length !== 0) {
+        const account = accounts[0];
+        console.log("Found an authorized account;", account);
+        setCurrentAccount(account);
+        setupEventLister();
+      } else {
+        console.log("No authorized account found");
+      }
+    };
     checkIfWalletIsConnected();
   }, []);
 
   useEffect(() => {
+    const initNftCount = async () => {
+      const { ethereum } = window;
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const connectedContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        myEpicNft.abi,
+        signer
+      );
+
+      const count = await connectedContract.getTotalNFTsMintedSoFar();
+      setNftCount(count.toNumber());
+    };
     initNftCount();
-  }, [nftCount]);
+  }, []);
 
   return (
     <div className="App">
